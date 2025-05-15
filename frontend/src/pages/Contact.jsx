@@ -1,30 +1,28 @@
 import React from "react";
+import { assets } from "../assets/assets";
 
 const Contact = () => {
   return (
-    <div className="w-full min-h-screen bg-gray-50 flex flex-col items-center justify-center p-6">
-      <div className="max-w-3xl bg-white shadow-lg rounded-xl p-8 text-center">
-        <h1 className="text-3xl font-bold text-blue-700">Contact Us</h1>
-        <p className="text-gray-700 mt-2">We'd love to hear from you! Get in touch with us for any inquiries.</p>
-
-        <div className="mt-6 text-left">
-          <div className="mb-4">
-            <h2 className="text-xl font-semibold text-gray-900">Phone</h2>
-            <p className="text-gray-700">+0-000-000-000</p>
-          </div>
-
-          <div className="mb-4">
-            <h2 className="text-xl font-semibold text-gray-900">Email</h2>
-            <p className="text-gray-700">greatstackdev@gmail.com</p>
-          </div>
-
-          <div className="mb-4">
-            <h2 className="text-xl font-semibold text-gray-900">Address</h2>
-            <p className="text-gray-700">123, Health Street, MedCity, Country</p>
-          </div>
-        </div>
+   <div>
+    
+      <div className="text-center text-2xl pt-10 pb-10 text-gray-500">
+        <p>CONTACT  <span className="text-gray-700 font-semibold">US</span></p>
       </div>
+    <div className="my-10 flex flex-col justify-center md:flex-row gap-10 mb-28 text-sm">
+    <img className=" w-full md:max-w-[360px]" src={assets.contact_image} alt=""/>
+    <div className="flex flex-col justify-center items-start gap-6">
+      <p className="text-gray-600 text-lg pt-10 font-semibold">OUR OFFICE</p>
+      <p className="text-gray-500">00000 Willms Station
+      Suite 000, Washington, USA</p>
+      <p className="text-gray-500">Tel: (000) 000-0000
+      Email: greatstackdev@gmail.com</p>
+      <p className="font-semibold text-lg text-gray-600"> CAREERS AT PRESCRIPTO</p>
+      <p className="text-gray-500">Learn more about our teams and job openings.</p>
+      <button className="border border-black px-8 py-4 text-sm hover:bg-black hover:text-white transition-all duration-500">Explore Jobs</button>
     </div>
+
+    </div>
+   </div>
   );
 };
 

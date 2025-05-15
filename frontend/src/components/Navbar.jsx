@@ -11,7 +11,7 @@ const Navbar = () => {
     const [token,setToken]=useState(true);
   return (
     <div className='flex items-center justify-between text-sm py-4 mb-5 border-b border-gray-400'>
-        <img className='w-44 cursor-pointer' src={assets.logo} alt="Logo"/>
+        <img onClick={()=>navigate('/')} className='w-44 cursor-pointer' src={assets.logo} alt="Logo"/>
         <ul className='hidden md:flex items-start gap-5 font-medium'>
             <NavLink to='/'>
                 <li className='py-1'>HOME</li>
@@ -34,7 +34,7 @@ const Navbar = () => {
         {
             token?
             <div className='relative flex items-center cursor-pointer group'>
-               <img  className='w-8 rounded-full ' src={assets.profile_pic} alt="profile pic"/>
+               <img className='w-8 rounded-full ' src={assets.profile_pic} alt="profile pic"/>
                <img className='w-2.5' src={assets.dropdown_icon} alt="dropdown icon"/>
                <div className='absolute top-0 right-0 pt-14 text-base font-medium text-gray-600 z-20 hidden group-hover:block '>
                   <div className='min-w-48 bg-stone-100 rounded flex flex-col gap-4 p-4'>

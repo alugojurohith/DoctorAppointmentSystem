@@ -10,7 +10,6 @@ const Home = () => {
        <Speciality/>
        <TopDoctors/>
        <Banner/>
-       <Footer/>
     </div>
   )
 }
