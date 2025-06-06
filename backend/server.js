@@ -32,6 +32,7 @@ import dotenv from 'dotenv';
 import connectDB from './config/mongodb.js';
 import { connectCloudinary } from './config/cloudinary.js';
 import adminRouter from './routes/adminRoute.js';
+import authAdmin from './middleware/authAdmin.js';
 
 dotenv.config(); // Load env variables early
 
