@@ -5,6 +5,8 @@ import doctorModel from "../models/doctorModel.js";
 import jwt from 'jsonwebtoken';
 const addDoctor = async (req, res) => {
   try {
+    console.log("Received body:", req.body);
+    console.log("Received file:", req.file);
     const {
       name,
       email,
@@ -27,18 +29,22 @@ const addDoctor = async (req, res) => {
       !about ||
       !fees
     ) {
+      console.log("Validation failed - missing fields:", { name: !!name, email: !!email, password: !!password, speciality: !!speciality, degree: !!degree, experience: !!experience, about: !!about, fees: !!fees });
       return res.status(400).json({ success: false, message: "All fields are required." });
     }
 
     if (!imageFile) {
+      console.log("Validation failed - no image file");
       return res.status(400).json({ success: false, message: "Doctor image is required." });
     }
 
     if (!validator.isEmail(email)) {
+      console.log("Validation failed - invalid email:", email);
       return res.status(400).json({ success: false, message: "Please enter a valid email address." });
     }
 
     if (password.length < 8) {
+      console.log("Validation failed - password too short:", password.length);
       return res.status(400).json({
         success: false,
         message: "Password must be at least 8 characters long.",
@@ -47,6 +53,7 @@ const addDoctor = async (req, res) => {
 
     const existingDoctor = await doctorModel.findOne({ email: email.toLowerCase() });
     if (existingDoctor) {
+      console.log("Validation failed - email already exists:", email);
       return res.status(400).json({ success: false, message: "Doctor with this email already exists." });
     }
 
@@ -72,7 +79,7 @@ const addDoctor = async (req, res) => {
       degree: degree.trim(),
       experience: experience.trim(),
       about: about.trim(),
-      fees: fees.trim(),
+      fees: Number(fees),
       date: Date.now(),
     };
 

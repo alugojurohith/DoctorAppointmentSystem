@@ -43,9 +43,8 @@ const doctorSchema = new mongoose.Schema({
     trim: true,
   },
   fees: {
-    type: String,
+    type: Number,
     required: true,
-    trim: true,
   },
   date: {
     type: Date,
