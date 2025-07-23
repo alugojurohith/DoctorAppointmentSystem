@@ -1,16 +1,43 @@
-import React, { useState } from 'react';
-
+import React, { useContext ,useState} from 'react';
+import { AppContext } from '../context/AppContext';
+import { toast } from 'react-toastify';
+import axios from 'axios';
 const Login = () => {
+  const { token,setToken, backendUrl } = useContext(AppContext);
   const [state, setState] = useState('Sign Up');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
 
   const onSubmitHandler = async (event) => {
-    event.preventDefault();
-    // TODO: add submit logic (API call, auth, etc.)
-  };
+  event.preventDefault();
+  try {
+    if (state === 'Sign Up') {
+      const { data } = await axios.post(backendUrl + '/api/user/register', { name, password, email });
+      if (data.success) {
+        localStorage.setItem('token', data.token);
+        setToken(data.token);
+        toast.success('Account created!');
+      } else {
+        toast.error(data.message);
+      }
+    } else {
+      const { data } = await axios.post(backendUrl + '/api/user/login', { email, password });
+      if (data.success) {
+        localStorage.setItem('token', data.token);
+        setToken(data.token);
+        toast.success('Login successful!');
+      } else {
+        toast.error(data.message);
+      }
+    }
+  } catch (error) {
+    console.error('Login error:', error);
+    toast.error(error.response?.data?.message || 'Something went wrong');
+  }
+};
 
+ 
   return (
     <form className="min-h-[80vh] flex items-center" onSubmit={onSubmitHandler}>
       <div className="flex flex-col gap-3 m-auto items-start p-8 min-w-[340px] sm:min-w-[420px] border rounded-xl text-zinc-600 text-sm shadow-lg ">
