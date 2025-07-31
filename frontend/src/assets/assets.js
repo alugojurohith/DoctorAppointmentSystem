@@ -296,4 +296,18 @@ export const doctors = [
             line2: 'Circle, Ring Road, London'
         }
     },
+    {
+        _id: 'doc16',
+        name: 'Dr. Michael Chen',
+        image: doc1, // Using doc1 image as placeholder
+        speciality: 'Gastroenterologist',
+        degree: 'MBBS, MD',
+        experience: '5 Years',
+        about: 'Dr. Michael Chen is a skilled gastroenterologist specializing in digestive system disorders and gastrointestinal health.',
+        fees: 70,
+        address: {
+            line1: '67th Cross, Richmond',
+            line2: 'Circle, Ring Road, London'
+        }
+    },
 ];

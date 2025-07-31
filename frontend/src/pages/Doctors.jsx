@@ -11,21 +11,43 @@ const Doctors = () => {
   const {doctors} = useContext(AppContext)
   const navigate=useNavigate();
 
+  console.log('Doctors component rendered');
+  console.log('Speciality from params:', speciality);
+  console.log('Doctors from context:', doctors);
+  console.log('Available specialities:', doctors.map(doc => doc.speciality));
+
   const applyFilter = () => {
+    console.log('Applying filter...');
     if(speciality)  {
-      setFilterDoc(doctors.filter(doc =>doc.speciality === speciality))
+      const filtered = doctors.filter(doc => doc.speciality === speciality);
+      console.log('Filtered doctors for', speciality, ':', filtered);
+      setFilterDoc(filtered);
     }
     else{
-      setFilterDoc(doctors)
+      console.log('No speciality filter, showing all doctors');
+      setFilterDoc(doctors);
     }
   }
 
   useEffect(()=>{
+    console.log('useEffect triggered');
     applyFilter()
   },[doctors,speciality])
 
   const handleSpecialityClick = (spec) => {
+    console.log('Speciality clicked:', spec);
     navigate(`/doctors/${spec}`);
+  }
+
+  if (!doctors || doctors.length === 0) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <h2 className="text-2xl font-bold text-gray-800 mb-4">Loading Doctors...</h2>
+          <p className="text-gray-600">Please wait while we fetch the doctors data.</p>
+        </div>
+      </div>
+    );
   }
 
   return(

@@ -2,9 +2,11 @@ import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import validator from 'validator';
 import userModel from '../models/userModel.js';
+import {v2 as cloudinary} from 'cloudinary';
+
 
 // Register User
-export const registerUser = async (req, res) => {
+const registerUser = async (req, res) => {
   try {
     const { name, email, password } = req.body;
 
@@ -37,9 +39,13 @@ export const registerUser = async (req, res) => {
     const newUser = new userModel({ name, email, password: hashedPassword });
     await newUser.save();
 
+    // Generate token for the new user
+    const token = jwt.sign({ id: newUser._id }, process.env.JWT_SECRET, { expiresIn: '1d' });
+
     res.status(201).json({
       success: true,
       message: "User registered successfully",
+      token: token,
       user: {
         id: newUser._id,
         name: newUser.name,
@@ -53,7 +59,7 @@ export const registerUser = async (req, res) => {
 };
 
 // Login User
-export const loginUser = async (req, res) => {
+const loginUser = async (req, res) => {
   try {
     const { email, password } = req.body;
 
@@ -74,3 +80,54 @@ export const loginUser = async (req, res) => {
     res.status(500).json({ success: false, message: error.message });
   }
 };
+
+
+const getProfile = async (req, res) => {
+  try {
+    const userId = req.user.id; // ✅ comes from authUser.js middleware
+    const userData = await userModel.findById(userId).select("-password");
+
+    if (!userData) {
+      return res.status(404).json({ success: false, message: "User not found" });
+    }
+
+    res.json({ success: true, user: userData });
+  } catch (error) {
+    console.error("Error fetching user profile:", error);
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+};
+
+//API TO UPDATE USER PROFILE
+const updateProfile = async (req, res) => {
+  try {
+    const {UserId, name, phone,dob,gender} = req.body;
+    const  imageFile=req.file;
+    if(!UserId || !name || !phone || !dob)
+    {
+      return res.status(400).json({ success: false, message: "Missing details" });
+    }
+    await userModel.findByIdAndUpdate(UserId, {
+      name,
+      phone,
+      dob,
+  }
+  );
+    if(imageFile)
+    {
+     const imageupload = await cloudinary.uploader.upload(imageFile.path, {
+      resource_type:"image"
+    });
+    const imageURL= imageupload.secure_url;
+    await userModel.findByIdAndUpdate(UserId, {
+    image: imageURL}
+    );
+    }
+    res.json({ success: true, message: "Profile updated successfully" });
+  } catch (error) {
+    console.error("Error updating profile:", error);
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+};
+
+export { registerUser, loginUser ,getProfile, updateProfile };
