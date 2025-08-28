@@ -18,6 +18,7 @@ connectCloudinary();
 
 // Global middleware
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 app.use(cors());
 
 // Debug & mount admin routes

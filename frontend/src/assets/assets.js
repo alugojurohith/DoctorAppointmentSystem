@@ -72,7 +72,7 @@ export const specialityData = [
         image: Dermatologist
     },
     {
-        speciality: 'Pediatricians',
+        speciality: 'Pediatrician',
         image: Pediatricians
     },
     {
@@ -132,7 +132,7 @@ export const doctors = [
         _id: 'doc4',
         name: 'Dr. Christopher Lee',
         image: doc4,
-        speciality: 'Pediatricians',
+        speciality: 'Pediatrician',
         degree: 'MBBS',
         experience: '2 Years',
         about: 'Dr. Christopher Lee is a gentle and friendly pediatrician focused on the growth and wellness of children of all ages.',
@@ -216,7 +216,7 @@ export const doctors = [
         _id: 'doc10',
         name: 'Dr. Jeffrey King',
         image: doc10,
-        speciality: 'Pediatricians',
+        speciality: 'Pediatrician',
         degree: 'MBBS',
         experience: '2 Years',
         about: 'Dr. Jeffrey King is devoted to children’s health, providing careful monitoring and treatment for every stage of growth.',

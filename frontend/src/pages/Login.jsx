@@ -14,6 +14,7 @@ const Login = () => {
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [profileImageFile, setProfileImageFile] = useState(null);
 
   const onSubmitHandler = async (event) => {
     event.preventDefault();
@@ -22,10 +23,15 @@ const Login = () => {
     try {
       if (state === 'Sign Up') {
         console.log('Registering user:', { name, email });
-        const { data } = await axios.post(backendUrl + '/api/user/register', { 
-          name, 
-          password, 
-          email 
+        const formData = new FormData();
+        formData.append('name', name);
+        formData.append('password', password);
+        formData.append('email', email);
+        if (profileImageFile) {
+          formData.append('image', profileImageFile);
+        }
+        const { data } = await axios.post(backendUrl + '/api/user/register', formData, {
+          headers: { 'Content-Type': 'multipart/form-data' }
         });
         
         console.log('Registration response:', data);
@@ -38,6 +44,7 @@ const Login = () => {
           setName('');
           setEmail('');
           setPassword('');
+          setProfileImageFile(null);
         } else {
           toast.error(data.message || 'Registration failed');
         }
@@ -128,6 +135,20 @@ const Login = () => {
           />
         </div>
 
+        {/* Profile Image (only for Sign Up) */}
+        {state === 'Sign Up' && (
+          <div className="w-full">
+            <p className="mb-1">Profile Image (optional)</p>
+            <input
+              type="file"
+              accept="image/*"
+              onChange={(e) => setProfileImageFile(e.target.files?.[0] || null)}
+              className="w-full p-2 border rounded"
+              disabled={isLoading}
+            />
+          </div>
+        )}
+
         {/* Submit Button */}
         <button
           type="submit"
@@ -147,7 +168,7 @@ const Login = () => {
             <p className="mt-2 text-sm">
               Already have an Account?{' '}
               <span 
-                onClick={() => setState('Login')} 
+                onClick={() => { setState('Login'); setProfileImageFile(null); }} 
                 className="text-primary underline cursor-pointer"
                 style={{ pointerEvents: isLoading ? 'none' : 'auto' }}
               >

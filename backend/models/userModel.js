@@ -26,6 +26,10 @@ const userSchema = new mongoose.Schema({
     type: String,  // change to String to handle leading zeros easily
     default: "0000000000",
   },
+  image: {
+    type: String,
+    default: "",
+  },
 });
 
 const userModel = mongoose.models.user || mongoose.model("user", userSchema);
