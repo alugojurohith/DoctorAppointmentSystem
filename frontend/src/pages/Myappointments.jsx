@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
 
 const Myappointments = () => {
-  const { backendUrl, token, currencySymbol } = useContext(AppContext)
+  const { backendUrl, token, currencySymbol, userData, getDoctorsData } = useContext(AppContext)
   const [appointments, setAppointments] = useState([])
   const [loading, setLoading] = useState(true)
   const navigate = useNavigate()
@@ -34,6 +34,61 @@ const Myappointments = () => {
       setLoading(false)
     }
   }
+
+  const cancelAppointment = async (appointmentId) => {
+    if (!userData?._id) {
+      toast.error('User data not available. Please refresh the page.')
+      return
+    }
+    
+    try {
+      const { data } = await axios.post(backendUrl + '/api/user/cancel-appointment', { 
+        appointmentId,
+        userId: userData._id 
+      }, { headers: { Authorization: `Bearer ${token}` } })
+      if (data.success) {
+        toast.success(data.message)
+        // Refresh appointments and doctor data to update slot availability
+        await getUserAppointments()
+        await getDoctorsData()
+      } else {
+        toast.error(data.message)
+      }
+    } catch (error) {
+      toast.error(error?.response?.data?.message || error.message)
+    }
+  }
+
+  const initPay = (order) =>
+  {
+    const options = {
+      key: import.meta.env.VITE_RAZORPAY_KEY_ID,
+      amount: order.amount,
+      currency: order.currency,
+      name: "Appointment Payment",
+      description: "Payment for appointment",
+      order_id:order.id,
+      receipt:order.receipt,
+      handler:async(response)=>{
+        console.log(response)
+    } 
+  }
+   const rzp=new window.Razorpay(options)
+   rzp.open()
+}
+
+  const appointmentRazorpay = async(appointmentId)=>{  
+    try{
+      const {data}=await axios.post(backendUrl + '/api/user/payment-razorpay',{appointmentId},{headers:{Authorization: `Bearer ${token}`}})
+      if(data.success){
+        initPay(data.order)
+    }
+    }catch(error){
+      console.log(error)
+    }
+  }
+
+
 
   const formatDate = (slotDate) => {
     if (!slotDate || typeof slotDate !== 'string') return ''
@@ -132,8 +187,9 @@ const Myappointments = () => {
               </span>
             </div>
             <div className='flex felx-col gap-2 justify-end'>
-               <button className='text-sm text-stone-500 text-center sm:min-w-48 py-2 border hover:bg-primary hover:text-white transition-all duration-300'>Pay Online</button>
-               <button className='text-sm text-stone-500 text-center sm:min-w-48 py-2 border hover:bg-red-600 hover:text-white transition-all duration-300'>Cancel appointment</button>
+               {!appt.cancelled && <button onClick={() => appointmentRazorpay(appt._id)} className='text-sm text-stone-500 text-center sm:min-w-48 py-2 border hover:bg-primary hover:text-white transition-all duration-300'>Pay Online</button>}
+               {!appt.cancelled && userData?._id && <button onClick={() => cancelAppointment(appt._id)} className='text-sm text-stone-500 text-center sm:min-w-48 py-2 border hover:bg-red-600 hover:text-white transition-all duration-300'>Cancel appointment</button>}
+
             </div>
           </div>
         ))}

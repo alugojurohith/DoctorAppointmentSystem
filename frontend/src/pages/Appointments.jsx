@@ -19,38 +19,18 @@ const Appointments = () => {
   const [docslots,setDocSlots] = useState([])
   const [slotIndex,setSlotIndex] = useState(0)
   const [slotTime,setSlotTime] = useState('')
-  const [localBooked,setLocalBooked] = useState({}) // in-session + persisted booked slots
-
-  const LOCAL_KEY_PREFIX = 'bookedSlots::'
 
   const fetchDocInfo =async () =>
   {
     const docInfo = doctors.find(doc => doc._id === docId)
     setDocInfo(docInfo)
-    console.log(docInfo)
+    console.log('Doctor info:', docInfo)
+    console.log('Doctor slots_booked:', docInfo?.slots_booked)
   }
 
-  const readLocalBooked = (doctorId) => {
-    try{
-      const raw = localStorage.getItem(LOCAL_KEY_PREFIX + doctorId)
-      if(!raw) return {}
-      const parsed = JSON.parse(raw)
-      if (parsed && typeof parsed === 'object') return parsed
-      return {}
-    }catch(e){
-      return {}
-    }
-  }
 
-  const writeLocalBooked = (doctorId, map) => {
-    try{
-      localStorage.setItem(LOCAL_KEY_PREFIX + doctorId, JSON.stringify(map))
-    }catch(e){
-      // ignore storage errors
-    }
-  }
 
-  // Merge backend-provided map (if any) with locally booked slots
+  // Use only backend-provided slots_booked, no more local booking
   const getBookedMap = () => {
     const merged = {}
     if (docInfo && docInfo.slots_booked && typeof docInfo.slots_booked === 'object') {
@@ -58,10 +38,6 @@ const Appointments = () => {
         merged[d] = Array.isArray(docInfo.slots_booked[d]) ? [...docInfo.slots_booked[d]] : []
       })
     }
-    Object.keys(localBooked).forEach(d => {
-      if (!merged[d]) merged[d] = []
-      merged[d] = Array.from(new Set([...merged[d], ...localBooked[d]]))
-    })
     return merged
   }
 
@@ -156,16 +132,8 @@ const Appointments = () => {
         const {data}= await axios.post(backendUrl + '/api/user/book-appointment',{docId,slotDate,slotTime},{headers:{Authorization: `Bearer ${token}`}})
         if(data.success){
           toast.success(data.message)
-          getDoctorsData()
-          // Update local map and persist
-          setLocalBooked(prev => {
-            const next = { ...prev }
-            if(!next[slotDate]) next[slotDate] = []
-            if(!next[slotDate].includes(slotTime)) next[slotDate].push(slotTime)
-            // persist
-            writeLocalBooked(docId, next)
-            return next
-          })
+          // Refresh doctor data to get updated slots
+          await getDoctorsData()
           // Regenerate available slots to reflect booking
           getAvalilableslots()
           navigate('/my-appointments')
@@ -193,17 +161,11 @@ const Appointments = () => {
    fetchDocInfo()
   },[doctors,docId])
 
-  // hydrate localBooked from localStorage whenever doctor changes
-  useEffect(()=>{
-    if (docId){
-      const stored = readLocalBooked(docId)
-      setLocalBooked(stored)
-    }
-  },[docId])
+
 
   useEffect(()=>{
      getAvalilableslots()
-  },[docInfo, localBooked])
+  },[docInfo])
 
   useEffect(()=>{
     console.log(docslots)

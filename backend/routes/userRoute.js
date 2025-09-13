@@ -1,6 +1,6 @@
 // routes/userRoutes.js
 import express from "express";
-import { registerUser, loginUser, getProfile ,updateProfile,bookAppointment, ListAppointments} from "../controllers/userController.js";
+import { registerUser, loginUser, getProfile ,updateProfile,bookAppointment, ListAppointments ,cancelAppointment,paymentRazorpay , verifyRazorpay} from "../controllers/userController.js";
 import authUser from "../middleware/authUser.js"; // Import auth middleware
 import upload from "../utils/multer.js";
 
@@ -16,6 +16,9 @@ userRouter.get("/profile", authUser, getProfile);
 userRouter.post("/update-profile",upload.single('image'),authUser,updateProfile); // Protected route to update profile
 userRouter.post('/book-appointment',authUser,bookAppointment)
 userRouter.get('/appointments',authUser,ListAppointments)
+userRouter.post('/cancel-appointment',authUser,cancelAppointment)
+userRouter.post('/payment-razorpay',authUser,paymentRazorpay)
+userRouter.post('/verifyRazorpay',authUser,verifyRazorpay)
 
 
 export default userRouter;

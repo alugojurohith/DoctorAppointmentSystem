@@ -1,0 +1,17 @@
+# Copy this file to .env and add your actual values
+
+# Razorpay Configuration
+RAZORPAY_KEY_ID=rzp_test_your_key_id_here
+RAZORPAY_KEY_SECRET=your_razorpay_key_secret_here
+
+# Currency (use INR for Indian Rupees)
+CURRENCY=INR
+
+# JWT Secret
+JWT_SECRET=your_jwt_secret_here
+
+# MongoDB URI
+MONGODB_URI=mongodb://localhost:27017/doctorappointment
+
+# Server Port
+PORT=4000
