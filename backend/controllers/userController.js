@@ -225,7 +225,15 @@ const ListAppointments = async (req, res) => {
     res.status(500).json({ success: false, message: "Server error" });
   }
 };
-
+// const ListAppointments = async (req, res) => {
+//   try {
+//     const userId = req.user.id;
+//     const appointments = await appointmentModel.find({ user: userId });
+//     res.json({ success: true, appointments });
+//   } catch (error) {
+//     res.status(500).json({ success: false, message: error.message });
+//   }
+// };
 //api to cancel an appointment
 const cancelAppointment = async (req, res) => {
   try {
@@ -307,10 +315,19 @@ const verifyRazorpay = async (req, res) => {
     const {razorpay_order_id}=req.body;
     const orderInfo = await razorpayInstance.orders.fetch(razorpay_order_id);
 
-     console.log(orderInfo);
+    //  console.log(orderInfo);
+     if(orderInfo.status==="paid"){
+      await appointmentModel.findByIdAndUpdate(orderInfo.receipt,{payment:true});
+      res.json({success:true,message:"Payment successful"})
+     } else{
+      res.json({success:false,message:"Payment failed"})
+     }
   }
   catch(error){
+    console.log(error);
+    res.json({ success: false, message: error.message })
 }
 }
 
-export { registerUser, loginUser, getProfile, updateProfile, bookAppointment, ListAppointments, cancelAppointment , paymentRazorpay ,verifyRazorpay };
+export { registerUser, loginUser, getProfile, updateProfile, bookAppointment, ListAppointments, cancelAppointment , paymentRazorpay , verifyRazorpay };
+ 

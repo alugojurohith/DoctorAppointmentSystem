@@ -71,6 +71,17 @@ const Myappointments = () => {
       receipt:order.receipt,
       handler:async(response)=>{
         console.log(response)
+
+        try{
+          const {data}=await axios.post(backendUrl + '/api/user/verifyRazorpay',response,{headers:{Authorization: `Bearer ${token}`}})
+          if(data.success){
+            getUserAppointments()
+            navigate('/my-appointments')
+          }
+        }catch(error){
+          console.log(error)
+          toast.error(error.message)
+        }
     } 
   }
    const rzp=new window.Razorpay(options)
@@ -187,7 +198,8 @@ const Myappointments = () => {
               </span>
             </div>
             <div className='flex felx-col gap-2 justify-end'>
-               {!appt.cancelled && <button onClick={() => appointmentRazorpay(appt._id)} className='text-sm text-stone-500 text-center sm:min-w-48 py-2 border hover:bg-primary hover:text-white transition-all duration-300'>Pay Online</button>}
+               {/* {appt.cancelled && appt.payment && <button className='sm:min-w-48 py-2 border rounded text-stone-500'>Paid</button>} */}
+               {!appt.cancelled && !appt.payment && <button onClick={() => appointmentRazorpay(appt._id)} className='text-sm text-stone-500 text-center sm:min-w-48 py-2 border hover:bg-primary hover:text-white transition-all duration-300'>Pay Online</button>}
                {!appt.cancelled && userData?._id && <button onClick={() => cancelAppointment(appt._id)} className='text-sm text-stone-500 text-center sm:min-w-48 py-2 border hover:bg-red-600 hover:text-white transition-all duration-300'>Cancel appointment</button>}
 
             </div>

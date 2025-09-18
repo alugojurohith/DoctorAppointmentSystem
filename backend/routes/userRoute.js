@@ -1,6 +1,6 @@
 // routes/userRoutes.js
 import express from "express";
-import { registerUser, loginUser, getProfile ,updateProfile,bookAppointment, ListAppointments ,cancelAppointment,paymentRazorpay , verifyRazorpay} from "../controllers/userController.js";
+import { registerUser, loginUser, getProfile ,updateProfile,bookAppointment, ListAppointments ,cancelAppointment,paymentRazorpay, verifyRazorpay} from "../controllers/userController.js";
 import authUser from "../middleware/authUser.js"; // Import auth middleware
 import upload from "../utils/multer.js";
 
